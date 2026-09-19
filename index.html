@@ -1,1 +1,171 @@
-<!DOCTYPE html><html><body><h1>Bodyload</h1><p>Uploading full app…</p></body></html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bodyload — Know Your Risk</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="device">
+  <div class="stripe-bar"></div>
+  <header>
+    <button class="back-btn" id="backBtn" onclick="goBack()">←</button>
+    <div class="brand">BODY<span>LOAD</span></div>
+    <div style="width:36px;"></div>
+  </header>
+
+  <main>
+
+    <!-- SCREEN 0: INDUSTRY PICKER -->
+    <section class="screen active" id="screen-industries">
+      <div class="eyebrow">Step 1 of 4</div>
+      <h1>What industry do you work in?</h1>
+      <p class="sub">Tap yours to see the jobs inside it.</p>
+      <div class="job-grid" id="industryGrid"></div>
+    </section>
+
+    <!-- SCREEN 1: JOB LIBRARY -->
+    <section class="screen" id="screen-jobs">
+      <div class="eyebrow">Step 2 of 4</div>
+      <h1 id="jobsScreenTitle">What's your job today?</h1>
+      <p class="sub">Tap the closest match. You'll confirm the details next.</p>
+      <div class="job-grid" id="jobGrid"></div>
+    </section>
+
+    <!-- SCREEN 2: CONFIRM / ADJUST -->
+    <section class="screen" id="screen-confirm">
+      <div class="eyebrow">Step 3 of 4</div>
+      <h1 id="confirmTitle">Confirm your day</h1>
+      <p class="sub">Tap to change anything that's different for you.</p>
+
+      <div class="field-label"><span class="num">1</span>Main posture</div>
+      <div class="chip-row" id="postureRow"></div>
+
+      <div class="field-label"><span class="num">2</span>Typical load</div>
+      <div class="chip-row" id="loadRow"></div>
+
+      <div class="field-label"><span class="num">3</span>How much of your shift</div>
+      <div class="chip-row" id="durationRow"></div>
+
+      <div class="field-label"><span class="num">4</span>How often</div>
+      <div class="chip-row" id="freqRow"></div>
+
+      <button class="primary-btn" onclick="showResult()">See my risk</button>
+    </section>
+
+    <!-- SCREEN 3: RESULT -->
+    <section class="screen" id="screen-result">
+      <div class="eyebrow">Your risk map</div>
+      <div class="job-name-banner" id="resultJobName"></div>
+      <h1>Tap a body zone</h1>
+
+      <div class="result-wrap">
+        <div class="view-toggle" role="tablist" aria-label="Body view">
+          <button type="button" class="view-btn active" id="viewFrontBtn" onclick="setBodyView('front')">Front</button>
+          <button type="button" class="view-btn" id="viewBackBtn" onclick="setBodyView('back')">Back</button>
+        </div>
+        <div class="body-map-row">
+          <div class="silhouette-box" id="silhouetteBox" data-view="front">
+            <img class="body-img" id="bodyImg" src="assets/body-front.png" alt="Anatomical muscle map — front view">
+            <div class="zones-layer" id="zonesLayer">
+              <button type="button" class="zone zone-neck" id="zone-neck" aria-label="Neck and shoulders" onclick="showZone('neck')"></button>
+              <button type="button" class="zone zone-back" id="zone-back" aria-label="Lower back" onclick="showZone('back')"></button>
+              <button type="button" class="zone zone-wrists-l" id="zone-wrists-l" aria-label="Left wrist" onclick="showZone('wrists')"></button>
+              <button type="button" class="zone zone-wrists-r" id="zone-wrists-r" aria-label="Right wrist" onclick="showZone('wrists')"></button>
+              <button type="button" class="zone zone-knees-l" id="zone-knees" aria-label="Left knee" onclick="showZone('knees')"></button>
+              <button type="button" class="zone zone-knees-r" id="zone-knees-r" aria-label="Right knee" onclick="showZone('knees')"></button>
+            </div>
+          </div>
+          <div class="legend" id="legend"></div>
+        </div>
+      </div>
+
+      <div class="zone-card" id="zoneCard">
+        <span class="risk-tag" id="zoneRiskTag"></span>
+        <h3 id="zoneTitle"></h3>
+        <h4>Why it's at risk</h4>
+        <p id="zoneWhy"></p>
+        <h4>How to reduce it</h4>
+        <ul id="zoneTechnique"></ul>
+        <h4>Early warning signs</h4>
+        <ul id="zoneSigns"></ul>
+        <button class="injured-btn" onclick="showInjured()">Already feeling this? Tap here</button>
+      </div>
+
+      <div class="zone-card" id="injuredCard">
+        <span class="risk-tag" style="background:var(--alert)">If you're already hurting</span>
+        <h4>Right now</h4>
+        <ul>
+          <li>Stop the motion causing the pain if you can — don't push through sharp or radiating pain.</li>
+          <li>Tell your supervisor or safety lead. Getting it on record matters, even if it feels minor.</li>
+          <li>Rest and gentle movement usually help more than staying fully still.</li>
+        </ul>
+        <h4>See a doctor or PT if</h4>
+        <ul>
+          <li>Pain lasts more than a few days or keeps returning</li>
+          <li>You feel numbness, tingling, or weakness</li>
+          <li>Swelling, bruising, or reduced range of motion shows up</li>
+        </ul>
+        <p style="margin-top:10px; font-style:italic;">This isn't a diagnosis — it's a nudge to get checked properly.</p>
+      </div>
+
+      <p class="tap-hint" id="tapHint">Tap a highlighted zone above</p>
+
+      <button class="primary-btn" style="margin-top:20px; background:transparent; border:1.5px solid var(--caution); color:var(--caution);" onclick="goTo('screen-science')">See the research behind this</button>
+
+      <div class="disclaimer">Bodyload gives general ergonomic awareness based on common occupational patterns. It isn't medical advice and doesn't replace a doctor, physical therapist, or occupational health professional.</div>
+    </section>
+
+    <!-- SCREEN 5: THE SCIENCE / OFFICIAL STANDARD -->
+    <section class="screen" id="screen-science">
+      <div class="eyebrow">Where this comes from</div>
+      <h1>Grounded in the official standard</h1>
+      <p class="sub">Bodyload's back-and-lifting risk is modeled on NIOSH's Revised Lifting Equation — the standard safety professionals actually use.</p>
+
+      <div class="zone-card active" style="margin-top:0;">
+        <span class="risk-tag" style="background:var(--safe)">NIOSH Revised Lifting Equation</span>
+        <h4>What it measures</h4>
+        <p>A Recommended Weight Limit (RWL) — the heaviest load nearly all healthy workers could lift over a full shift without raising their risk of back injury.</p>
+        <h4>The risk score</h4>
+        <p>Weight lifted ÷ RWL = Lifting Index. Under 1.0 is considered safe for most workers. Over 3.0 means high risk and calls for an immediate redesign of the task.</p>
+        <h4>What it doesn't cover</h4>
+        <ul>
+          <li>Only lifting — not standing fatigue, typing, driving, or hunched close work</li>
+          <li>Doesn't account for slippery floors, restricted space, or awkward environments</li>
+          <li>No official equivalent exists yet for most non-lifting jobs — that's the gap Bodyload fills</li>
+        </ul>
+        <h4>Official tool</h4>
+        <p>NIOSH publishes a free calculator app, NLE Calc, used by safety professionals for lifting-specific assessments.</p>
+      </div>
+
+      <div class="disclaimer">Bodyload draws on published occupational health research for lifting tasks and applies the same underlying risk logic — frequency, duration, load, and body position — to postures NIOSH doesn't cover.</div>
+    </section>
+
+    <!-- SCREEN 4: MANUAL JOB BUILDER (Add your job) -->
+    <section class="screen" id="screen-manual">
+      <div class="eyebrow">Add your job</div>
+      <h1>Build it in 4 taps</h1>
+      <p class="sub">We'll save this so others in your role can use it too.</p>
+
+      <div class="field-label"><span class="num">1</span>Main posture</div>
+      <div class="chip-row" id="mPostureRow"></div>
+
+      <div class="field-label"><span class="num">2</span>Typical load</div>
+      <div class="chip-row" id="mLoadRow"></div>
+
+      <div class="field-label"><span class="num">3</span>How much of your shift</div>
+      <div class="chip-row" id="mDurationRow"></div>
+
+      <div class="field-label"><span class="num">4</span>How often</div>
+      <div class="chip-row" id="mFreqRow"></div>
+
+      <button class="primary-btn" onclick="showResultFromManual()">See my risk</button>
+    </section>
+
+  </main>
+</div>
+
+<script src="app.js"></script>
+</body>
+</html>
